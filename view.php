@@ -36,7 +36,7 @@
 	$record["choice9"] = mysql_result($result, 0, "choice9");
 	$record["choice10"] = mysql_result($result, 0, "choice10");
 
-	$query = "SELECT * FROM poll_data WHERE id = " . $ID . " AND user_id = '" . $user . "'";
+	$query = "SELECT * FROM poll_data WHERE id = " . $ID . " AND user_id = '" . $USER_EMAIL . "'";
 	//echo $query;
 	$result = mysql_query($query);	
 	if ($result == false)
@@ -91,13 +91,13 @@
 	////////////////////////////////////////////////////////////////////////////////////////////////
 ?>
 	
-	<h2>Question</h2>
-	<h3><? echo $record["question"]; ?>
+	<h2><u>Question</u></h2>
+	<h3><? echo $record["question"]; ?></h3>
+	<h4 style="padding: 10px;">Created: <? echo date('l jS \of F Y h:i:s A', strtotime($record['date']) ); ?>
 	<form name="theViewForm" target="_top" action="./index.php?#" method="get">
 	<input name="respond" type="hidden" value="VOTE" />
 	<input name="vote_type" type="hidden" value="<? echo $option_type_string; ?>" />
 	<input name="id" type="hidden" value="<? echo $ID; ?>" />
-	<input name="user_id" type="hidden" value="<? echo $user; ?>" />
 <?
 	for ($i = 1; $i <= 10; $i++)
 	{
@@ -138,7 +138,7 @@
 	else
 		echo '<label>This poll is closed.</label>';
 
-	echo '</form></h3>';
+	echo '</form></h4>';
 
 	$show_id = $record["show_id"];
 	$show_vote = $record["show_vote"];
@@ -177,17 +177,23 @@
 				{
 					$cnt = 0;
 					$voters = array();
+					$voter_ids = array();
+					$voter_time = array();
 					for ($j = 0; $j < $num; $j++)
 					{
 						if ($data[$j][$key] == 1)
 						{
-							$voters[$cnt] = $data[$j]["user_id"];
+							$voters[$cnt] = $data[$j]["user_name"];
+							$voter_ids[$cnt] = $data[$j]["user_id"];
+							$voter_time[$cnt] = date('l F jS Y h:i:s A', strtotime($data[$j]["vote_time"]) );
 							$cnt ++;
 						}
 					}
 					
 					$display_data[$key]["count"] = $cnt;
 					$display_data[$key]["voters"] = $voters;
+					$display_data[$key]["voter_ids"] = $voter_ids;
+					$display_data[$key]["voter_time"] = $voter_time;
 				}
 			}
 		}
@@ -209,7 +215,7 @@
 						echo '<ul>';
 						for($t = 0; $t < $display_data[$key]["count"]; $t++)
 						{
-							echo '<li>' . $display_data[$key]["voters"][$t] . '</li>';
+							echo '<li>' . $display_data[$key]["voters"][$t] .  ' (' . $display_data[$key]["voter_ids"][$t] . ') - ' . $display_data[$key]["voter_time"][$t] . '</li>';
 						}
 						echo '</ul>';
 					}
