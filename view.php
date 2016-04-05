@@ -5,7 +5,7 @@
 		header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
 		exit();
 	}
-	
+
 	connect_db();
 	
 	$ID = $_GET["id"];
@@ -130,8 +130,11 @@
 	{
 		if ($vote_exists)
 		{
-			echo '<p>Your vote is shown above. You can change your vote until the poll is closed. </p>';
+			echo '<p style="margin:0px; padding:2px">Your vote is shown above. You can change your vote until the poll is closed. </p>';
+			echo '<p style="color:red; margin:0px; padding:2px">Do not forget to press the UPDATE button to update your vote! </p>';
 		}
+		else
+			echo '<p style="color:red; margin:0px">Do not forget to press the VOTE button to submit your vote! </p>';
 
 		echo '<input type="submit" name="vote" value="' . $submit_key . '">';
 	}
@@ -150,7 +153,7 @@
 		$show_vote = 1;
 	}
 
-	$query = "SELECT * FROM poll_data WHERE id=" . $ID;
+	$query = "SELECT * FROM poll_data WHERE id=" . $ID . " ORDER BY user_name ASC";
 	$result = mysql_query($query);	
 	if ($result == false)
 	{
@@ -212,12 +215,18 @@
 					echo $record[$key] . ' : ' . $display_data[$key]["count"] . '<br/>';
 					if ($show_id == 1)
 					{
-						echo '<ul>';
+						$names_list = "";
+						echo '<table style="width:100%; font-size:12px" class="sortable">';
+						echo '<tr><th>Name</th><th>Email</th><th>Date last voted</th></tr>';
 						for($t = 0; $t < $display_data[$key]["count"]; $t++)
 						{
-							echo '<li>' . $display_data[$key]["voters"][$t] .  ' (' . $display_data[$key]["voter_ids"][$t] . ') - ' . $display_data[$key]["voter_time"][$t] . '</li>';
+							$name = ucwords(strtolower($display_data[$key]["voters"][$t]));
+							$names_list = $names_list . $name . "\n";
+							echo '<tr><td>' . $name .  '</td><td>' . strtolower($display_data[$key]["voter_ids"][$t]) . '</td><td>' . $display_data[$key]["voter_time"][$t] . '</td></tr>';
 						}
-						echo '</ul>';
+						echo '</table>';
+
+						echo '<button height="20px" class="copy-button" data-clipboard-text="' . $names_list . '"><img src="images/clippy.svg" width="25px" height="20px" alt="Copy to clipboard">Copy to Clipboard</button><br><br>';
 					}
 				}
 			}
@@ -225,3 +234,5 @@
 		echo '</h3>';
 	}
 	mysql_close();
+
+	echo "<script> (function(){ new Clipboard('.copy-button'); })();</script>";
