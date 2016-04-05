@@ -263,9 +263,9 @@ input.button {
 	position: relative;
 	clear: both;
 	margin: 5px auto;
-	height: 250px;
+	height: 200px;
 	width: 850px;
-	background: #fff url(header-photo.jpg) no-repeat center center;
+	background: #fff url(header-photo-new.jpg) no-repeat center center;
 }
 #header-photo h1#logo-text a {
 	position: absolute;
