@@ -74,7 +74,7 @@
 		connect_db();
 		$id = $_GET["id"];
 		$query = "DELETE FROM poll_data WHERE id = " . $id . " AND user_id = '" . $USER_EMAIL . "'";
-		echo $query;
+		//echo $query;
 		$result = mysql_query($query);	
 
 		if ($result == false) {
