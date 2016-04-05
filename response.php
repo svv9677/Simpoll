@@ -69,6 +69,22 @@
 				});</script>';
 		}				
 	}
+	else if ($RESPOND == "CLEAR_VOTE")
+	{
+		connect_db();
+		$id = $_GET["id"];
+		$query = "DELETE FROM poll_data WHERE id = " . $id . " AND user_id = '" . $USER_EMAIL . "'";
+		echo $query;
+		$result = mysql_query($query);	
+
+		if ($result == false) {
+			echo "<h3>Unable to delete your poll vote. Error: " . mysql_error() . "</h3>";
+		} else {
+			$new_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?command=VIEW&id=' . $id;
+			echo '<script type="text/javascript"> window.top.location="' . $new_uri . '"; </script>';
+		}				
+		mysql_close();
+	}
 	else if ($RESPOND == "VOTE")
 	{
 		if ($_GET["vote_type"] == "radio")

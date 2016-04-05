@@ -91,13 +91,30 @@
 	////////////////////////////////////////////////////////////////////////////////////////////////
 ?>
 	
+	<script>
+	function checkvote()
+	{
+		var x = document.forms["theViewForm"]["answer"].value;
+		if(x == null || x == "")
+		{
+			if ($option_type_string == "radio")
+				alert("Please select your choice");
+			else
+				alert("Please select at least one choice");
+			return false;
+		}
+		return true;
+	}
+	</script>
+
 	<h2><u>Question</u></h2>
 	<h3><? echo $record["question"]; ?></h3>
 	<h4 style="padding: 10px;">Created: <? echo date('l jS \of F Y h:i:s A', strtotime($record['date']) ); ?>
-	<form name="theViewForm" target="_top" action="./index.php?#" method="get">
+	<form name="theViewForm" target="_top" onSubmit="return checkvote()" action="./index.php?#" method="get">
 	<input name="respond" type="hidden" value="VOTE" />
 	<input name="vote_type" type="hidden" value="<? echo $option_type_string; ?>" />
 	<input name="id" type="hidden" value="<? echo $ID; ?>" />
+
 <?
 	for ($i = 1; $i <= 10; $i++)
 	{
@@ -136,12 +153,21 @@
 		else
 			echo '<p style="color:red; margin:0px">Do not forget to press the VOTE button to submit your vote! </p>';
 
-		echo '<input type="submit" name="vote" value="' . $submit_key . '">';
+		echo '<input type="submit" name="vote" value="' . $submit_key . '" />';
 	}
 	else
 		echo '<label>This poll is closed.</label>';
 
-	echo '</form></h4>';
+	echo '</form>';
+
+	if ($vote_exists)
+	{
+		echo '<form name="theClearForm" target="_top" action="./index.php?#" method="get"> <input name="respond" type="hidden" value="CLEAR_VOTE"/>
+			  <input name="id" type="hidden" value="' . $ID . '" /> <input type="submit" name="vote" value="CLEAR" /></form></h4>';
+	}
+	else
+		echo '</h4>';
+
 
 	$show_id = $record["show_id"];
 	$show_vote = $record["show_vote"];
